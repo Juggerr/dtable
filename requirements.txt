@@ -1,0 +1,6 @@
+Django==1.6.5
+PyYAML==3.11
+South==1.0
+argparse==1.2.1
+django-ajax==2.2.10
+wsgiref==0.1.2
