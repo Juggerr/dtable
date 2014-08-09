@@ -1,4 +1,3 @@
-import json
 import datetime
 from django.shortcuts import render
 from django.db import models
@@ -9,10 +8,15 @@ from django.core.exceptions import ValidationError
 from django.views.decorators.csrf import csrf_exempt
 
 
-def index(request):
+def get_app_models(app):
     from django.db.models import get_app, get_models
-    app = get_app('main')
+    app = get_app(app)
     models = get_models(app)
+    return models
+
+
+def index(request):
+    models = get_app_models('main')
     models_verbose = []
     for model in models:
         models_verbose.append({'verbose_name': model._meta.verbose_name,
@@ -28,37 +32,33 @@ def update_cell(request):
     model_id = request.POST.get('model', '')
     value = request.POST.get('value', '')
 
-    from django.db.models import get_app, get_models
-    app = get_app('main')
-    models = get_models(app)
-    mo = next(
+    models = get_app_models('main')
+    model = next(
         model for model in models if model._meta.model_name == model_id)
 
     error_message = ''
     try:
         if int(row_id) == 0:
-            row = mo()
+            row = model()
             setattr(row, field, value)
             row.save()
         else:
-            record = mo.objects.get(id=row_id)
+            record = model.objects.get(id=row_id)
             setattr(record, field, value)
             record.save()
-    except ValueError as e:
-        error_message = 'Input error: value "{}" is not valid for field "{}" in entity "{}"'.format(value, field, model_id)
-    except ValidationError as e:
-        error_message = 'Input error: value "{}" is not valid for field "{}" in entity "{}"'.format(value, field, model_id)
-    return {'error':error_message}
+    except (ValueError, ValidationError):
+        error_message = 'Input error: value "{}" is not valid for field "{}" in entity "{}"'.format(
+            value, field, model_id)
+    return {'error': error_message}
 
 @ajax
 def get_models(request):
-    from django.db.models import get_app, get_models
-    app = get_app('main')
-    models = get_models(app)
+    models = get_app_models('main')
     model_id = request.POST.get('model_id', '')
     model = next(
         model for model in models if model._meta.model_name == model_id)
 
+    rows = None
     rows = model.objects.all()
     table = []
 
@@ -67,9 +67,8 @@ def get_models(request):
         default_row = model()
         default_row.save()
         is_empty = True
-
-    rows = model.objects.all()
-
+        rows = model.objects.all()
+    
     for row in rows:
         new_row = {}
         for field_name, value in row.__dict__.iteritems():
@@ -94,4 +93,4 @@ def get_models(request):
             new_row.update({field_name: [value, cell_type, verbose_name]})
         table.append({'row': new_row, 'row_id': row.id})
 
-    return {'models': json.dumps(table), 'model': model_id, 'is_empty': is_empty}
+    return {'models': serialize_to_json(table), 'model': model_id, 'is_empty': is_empty}
