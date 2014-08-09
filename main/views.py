@@ -6,6 +6,7 @@ from django_ajax.decorators import ajax
 from django_ajax.encoder import serialize_to_json
 from django.http import HttpResponse
 from django.core.exceptions import ValidationError
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -19,7 +20,6 @@ def index(request):
     return render(request,
                   'index.html',
                   {'models': models_verbose})
-
 
 @ajax
 def update_cell(request):
@@ -49,7 +49,6 @@ def update_cell(request):
     except ValidationError as e:
         error_message = 'Input error: value "{}" is not valid for field "{}" in entity "{}"'.format(value, field, model_id)
     return {'error':error_message}
-
 
 @ajax
 def get_models(request):
