@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'main',
     'django_ajax',
-    'south',
+    #'south',
 )
 
 MIDDLEWARE_CLASSES = (
