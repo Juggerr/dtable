@@ -19,14 +19,14 @@
   		{% endfor %}
   	</ul>
   </div>
+ 
+  <input type="hidden" id="csrf_token" value="{{csrf_token}}">
+ 
+  <div id="error-box" style="color: red;"></div>
 
-  <div id="error-box" style="color: red;">
-  </div>
+  <div id="table"></div>
 
-  <div id="table">
-  </div>
-
-<script type="text/javascript" src="{% static "js/script.js" %}"></script>
 <script type="text/javascript" src="{% static "js/calendar.js" %}"></script>
+<script type="text/javascript" src="{% static "js/script.js" %}"></script>
 </body>
 </html>

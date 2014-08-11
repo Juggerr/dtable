@@ -1,7 +1,7 @@
 import yaml
 from django.db import models
 from django.contrib import admin
-
+from test_task import settings
 
 def create_model(name, fields=None, app_label='', module='', options=None, admin_opts=None):
     """
@@ -46,7 +46,6 @@ def install(model):
     from django.db import connection
 
     style = color.no_style()
-
     cursor = connection.cursor()
     statements = sql.custom_sql_for_model(model, style, connection)
     for sql in statements:
@@ -54,7 +53,6 @@ def install(model):
 
 
 def get_filed_by_alias(filed_alias, field_title):
-
     FIELD_TYPE_MAP = {
 		'int': models.IntegerField(verbose_name=field_title, null=True),
 		'char': models.CharField(verbose_name=field_title, max_length=255, null=True),
@@ -64,7 +62,7 @@ def get_filed_by_alias(filed_alias, field_title):
     return FIELD_TYPE_MAP[filed_alias]
 
 
-db_schema = open('db_schema.yaml', 'r')
+db_schema = open(settings.YAML_DB_SCHEMA, 'r')
 yaml_models = yaml.load(db_schema)
 for model_name, model_props in yaml_models.items():
     fields = {}
