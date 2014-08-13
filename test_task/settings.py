@@ -10,9 +10,10 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
+SOUTH_TESTS_MIGRATE = False
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
@@ -27,6 +28,10 @@ TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = []
 
 YAML_DB_SCHEMA = 'db_schema.yaml'
+
+# If run in test mode
+if 'test' in sys.argv:
+    YAML_DB_SCHEMA = 'test_db.yaml'
 
 # Application definition
 INSTALLED_APPS = (

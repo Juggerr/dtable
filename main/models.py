@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib import admin
 from test_task import settings
 
+
 def create_model(name, fields=None, app_label='', module='', options=None, admin_opts=None):
     """
     Create specified model
@@ -54,30 +55,30 @@ def install(model):
 
 def get_filed_by_alias(filed_alias, field_title):
     FIELD_TYPE_MAP = {
-		'int': models.IntegerField(verbose_name=field_title, null=True),
-		'char': models.CharField(verbose_name=field_title, max_length=255, null=True),
-		'date': models.DateField(verbose_name=field_title, null=True)
+        'int': models.IntegerField(verbose_name=field_title, null=True),
+        'char': models.CharField(verbose_name=field_title, max_length=255, null=True),
+        'date': models.DateField(verbose_name=field_title, null=True)
     }
 
     return FIELD_TYPE_MAP[filed_alias]
-
 
 db_schema = open(settings.YAML_DB_SCHEMA, 'r')
 yaml_models = yaml.load(db_schema)
 for model_name, model_props in yaml_models.items():
     fields = {}
     for field in model_props['fields']:
-        fields.update({field['id']: get_filed_by_alias(field['type'], field['title'])})
+        fields.update(
+            {field['id']: get_filed_by_alias(field['type'], field['title'])})
 
     options = {
         'verbose_name': model_props['title'],
     }
 
     model = create_model(model_name, fields,
-        module=__name__,
-        options=options,
-        admin_opts={},
-        app_label='main',
-    )
+                         module=__name__,
+                         options=options,
+                         admin_opts={},
+                         app_label='main',
+                         )
 
     install(model)
