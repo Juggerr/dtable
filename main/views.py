@@ -25,6 +25,7 @@ def index(request):
                   'index.html',
                   {'models': models_verbose})
 
+@csrf_exempt
 @ajax
 def update_cell(request):
     row_id = request.POST.get('id', '')
@@ -51,6 +52,7 @@ def update_cell(request):
             value, field, model_id)
     return {'error': error_message}
 
+@csrf_exempt
 @ajax
 def get_models(request):
     models = get_app_models('main')
@@ -68,7 +70,7 @@ def get_models(request):
         default_row.save()
         is_empty = True
         rows = model.objects.all()
-    
+
     for row in rows:
         new_row = {}
         for field_name, value in row.__dict__.iteritems():
