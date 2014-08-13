@@ -115,7 +115,7 @@ class TableTest(TestCase):
                 '/update_cell', {'id': 2, 'model': 'users', 'field': 'paycheck', 'value': invalid_value_for_paycheck}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         resp = json.loads(resp.content)
         self.assertTrue(
-            'Hundred' in resp['content']['error'].replace('"', '').split())
+            invalid_value_for_paycheck in resp['content']['error'].replace('"', '').split())
 
         invalid_value_for_date_joined = 'March'
         with transaction.atomic():
@@ -123,5 +123,5 @@ class TableTest(TestCase):
                 '/update_cell', {'id': 2, 'model': 'users', 'field': 'date_joined', 'value': invalid_value_for_date_joined}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         resp = json.loads(resp.content)
         self.assertTrue(
-            'March' in resp['content']['error'].replace('"', '').split())
+            invalid_value_for_date_joined in resp['content']['error'].replace('"', '').split())
 

@@ -5,7 +5,6 @@ from django_ajax.decorators import ajax
 from django_ajax.encoder import serialize_to_json
 from django.http import HttpResponse
 from django.core.exceptions import ValidationError
-from django.views.decorators.csrf import csrf_exempt
 
 
 def get_app_models(app):
@@ -25,7 +24,6 @@ def index(request):
                   'index.html',
                   {'models': models_verbose})
 
-@csrf_exempt
 @ajax
 def update_cell(request):
     row_id = request.POST.get('id', '')
@@ -52,7 +50,6 @@ def update_cell(request):
             value, field, model_id)
     return {'error': error_message}
 
-@csrf_exempt
 @ajax
 def get_models(request):
     models = get_app_models('main')
