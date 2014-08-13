@@ -30,11 +30,11 @@ var ajaxSender = function(updatedModel) {
             if (req.status == 200) {
                 var response = JSON.parse(req.responseText);
                 var table = JSON.parse(response.content.models);
-                var model_id = response.content.model;
-                var html_table = document.createElement('table');
-                html_table.setAttribute('id', 'table_table');
-                html_table.setAttribute('data-model', model_id);
-                html_table.setAttribute('border', 1);
+                var modelId = response.content.model;
+                var htmlTable = document.createElement('table');
+                htmlTable.setAttribute('id', 'table_table');
+                htmlTable.setAttribute('data-model', modelId);
+                htmlTable.setAttribute('border', 1);
 
                 var addLastRow = false;
                 if (response.content.is_empty) {
@@ -43,79 +43,79 @@ var ajaxSender = function(updatedModel) {
                     addLastRow = true;
                 }
 
-                var adding_row;
-                for (var t_row in table) {
-                    var h_row = document.createElement('tr');
-                    html_table.appendChild(h_row);
-                    adding_row = document.createElement('tr');
-                    adding_row.setAttribute('style', "height: 20px;");
-                    adding_row.setAttribute('data-row-id', 0);
+                var addingRow;
+                for (var tRow in table) {
+                    var hRow = document.createElement('tr');
+                    htmlTable.appendChild(hRow);
+                    addingRow = document.createElement('tr');
+                    addingRow.setAttribute('style', "height: 20px;");
+                    addingRow.setAttribute('data-row-id', 0);
                     var row = document.createElement('tr');
-                    row.setAttribute('data-row-id', table[t_row].row_id);
-                    for (var t_cell in table[t_row].row) {
+                    row.setAttribute('data-row-id', table[tRow].row_id);
+                    for (var tCell in table[tRow].row) {
                         var cell = document.createElement('td');
-                        var l_cell = document.createElement('td');
+                        var lCell = document.createElement('td');
                         cell.setAttribute('class', 'cell');
-                        l_cell.setAttribute('class', 'cell');
-                        var inner_div = document.createElement('div');
-                        inner_div.setAttribute('data-field', t_cell);
-                        inner_div.setAttribute('data-type', table[t_row].row[t_cell][1]);
-                        l_cell.appendChild(inner_div.cloneNode(false));
-                        inner_div.innerHTML = table[t_row].row[t_cell][0];
-                        var h_cell = document.createElement('td');
-                        h_cell.innerHTML = table[t_row].row[t_cell][2];
-                        h_row.appendChild(h_cell);
-                        cell.appendChild(inner_div);
-                        if (table[t_row].row[t_cell][1] == 'id') {
-                            h_row.insertBefore(h_cell, h_row.firstChild);
+                        lCell.setAttribute('class', 'cell');
+                        var innerDiv = document.createElement('div');
+                        innerDiv.setAttribute('data-field', tCell);
+                        innerDiv.setAttribute('data-type', table[tRow].row[tCell][1]);
+                        lCell.appendChild(innerDiv.cloneNode(false));
+                        innerDiv.innerHTML = table[tRow].row[tCell][0];
+                        var hCell = document.createElement('td');
+                        hCell.innerHTML = table[tRow].row[tCell][2];
+                        hRow.appendChild(hCell);
+                        cell.appendChild(innerDiv);
+                        if (table[tRow].row[tCell][1] == 'id') {
+                            hRow.insertBefore(hCell, hRow.firstChild);
                             row.insertBefore(cell, row.firstChild);
-                            adding_row.insertBefore(l_cell, adding_row.firstChild);
+                            addingRow.insertBefore(lCell, addingRow.firstChild);
                         } else {
-                            h_row.appendChild(h_cell);
+                            hRow.appendChild(hCell);
                             row.appendChild(cell);
-                            adding_row.appendChild(l_cell);
+                            addingRow.appendChild(lCell);
                         }
 
                     }
-                    html_table.replaceChild(h_row, html_table.firstChild);
-                    html_table.appendChild(row);
+                    htmlTable.replaceChild(hRow, htmlTable.firstChild);
+                    htmlTable.appendChild(row);
                 }
                 if (addLastRow) {
-                    html_table.appendChild(adding_row);
+                    htmlTable.appendChild(addingRow);
                 }
-                var table_container = document.getElementById('table');
+                var tableContainer = document.getElementById('table');
                 if (document.getElementById('table_table')) {
-                    table_container.replaceChild(html_table, document.getElementById('table_table'));
+                    tableContainer.replaceChild(htmlTable, document.getElementById('table_table'));
                 } else {
-                    table_container.appendChild(html_table);
+                    tableContainer.appendChild(htmlTable);
                 }
 
                 var cells = document.getElementsByClassName('cell');
 
                 var editHandler = function() {
                     if (this.tagName != 'input') {
-                        var input_field = document.createElement('input');
-                        var cell_type = this.firstChild.getAttribute('data-type');
-                        var data_field = this.firstChild.getAttribute('data-field');
-                        if (cell_type == 'text') {
-                            input_field.type = 'text';
-                        } else if (cell_type == 'int') {
-                            input_field.type = 'number';
-                        } else if (cell_type == 'date') {
-                            input_field.type = 'text';
-                            input_field.id = 'date';
+                        var inputField = document.createElement('input');
+                        var cellType = this.firstChild.getAttribute('data-type');
+                        var dataField = this.firstChild.getAttribute('data-field');
+                        if (cellType == 'text') {
+                            inputField.type = 'text';
+                        } else if (cellType == 'int') {
+                            inputField.type = 'number';
+                        } else if (cellType == 'date') {
+                            inputField.type = 'text';
+                            inputField.id = 'date';
                         }
-                        input_field.setAttribute('data-type', cell_type);
-                        input_field.setAttribute('data-field', data_field);
-                        input_field.setAttribute('value', this.firstChild.innerHTML);
-                        this.replaceChild(input_field, this.firstChild);
+                        inputField.setAttribute('data-type', cellType);
+                        inputField.setAttribute('data-field', dataField);
+                        inputField.setAttribute('value', this.firstChild.innerHTML);
+                        this.replaceChild(inputField, this.firstChild);
 
                         this.firstChild.focus();
                         this.onclick = null;
                         calendar.set("date");
                         this.firstChild.click(true);
 
-                        var replace = function() {
+                        var replaceDivToInput = function() {
                             var newDiv = document.createElement('div');
                             var input;
                             if (document.getElementById('date')) {
@@ -126,8 +126,8 @@ var ajaxSender = function(updatedModel) {
 
                             var value = input.value;
                             newDiv.innerHTML = value;
-                            var data_type = input.getAttribute('data-type');
-                            newDiv.setAttribute('data-type', data_type);
+                            var dataType = input.getAttribute('data-type');
+                            newDiv.setAttribute('data-type', dataType);
 
                             var field = input.getAttribute('data-field');
                             newDiv.setAttribute('data-field', field);
@@ -144,15 +144,15 @@ var ajaxSender = function(updatedModel) {
                                     if (req.status == 200) {
                                         var response = JSON.parse(req.responseText);
                                         var error = response.content.error;
-                                        var error_box = document.getElementById('error-box');
+                                        var errorBox = document.getElementById('error-box');
                                         if (error) {
-                                            var errored_cell = document.getElementById('changed');
-                                            errored_cell.setAttribute('style', 'background-color: red; height: 20px');
-                                            error_box.innerHTML = error;
+                                            var erroredCell = document.getElementById('changed');
+                                            erroredCell.setAttribute('style', 'background-color: red; height: 20px');
+                                            errorBox.innerHTML = error;
                                         } else {
-                                            error_box.innerHTML = '';
-                                            var model_item = document.getElementById(model);
-                                            model_item.click();
+                                            errorBox.innerHTML = '';
+                                            var modelItem = document.getElementById(model);
+                                            modelItem.click();
                                         }
                                     }
                                 }
@@ -166,13 +166,13 @@ var ajaxSender = function(updatedModel) {
                         };
 
 
-                        if (cell_type == 'text' || cell_type == 'int') {
-                            this.firstChild.onblur = replace;
-                        } else if (cell_type == 'date') {
-                            this.firstChild.onchange = replace;
+                        if (cellType == 'text' || cellType == 'int') {
+                            this.firstChild.onblur = replaceDivToInput;
+                        } else if (cellType == 'date') {
+                            this.firstChild.onchange = replaceDivToInput;
                         }
 
-                        calendar.onhide = replace;
+                        calendar.onhide = replaceDivToInput;
                     }
                 };
 
